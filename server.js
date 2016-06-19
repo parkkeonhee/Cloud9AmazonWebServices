@@ -19,10 +19,75 @@ var express = require('express');
 var router = express();
 var server = http.createServer(router);
 var io = socketio.listen(server);
+var formidable = require('formidable');
 
 router.use(express.static(path.resolve(__dirname, 'client')));
 var messages = [];
 var sockets = [];
+
+router.post('/', function(req, res){
+
+  // create an incoming form object
+  var form = new formidable.IncomingForm();
+
+  // specify that we want to allow the user to upload multiple files in a single request
+  form.multiples = true;
+
+  // store all uploads in the /uploads directory
+  // form.uploadDir = path.join(__dirname, '/uploads');
+
+  // every time a file has been uploaded successfully,
+  // rename it to it's orignal name
+  form.on('file', function(field, file) {
+    // Read a file from disk, store it in Redis, then read it back from Redis.
+
+var redis = require("redis"),
+    client = redis.createClient(6379, "myfirstcluster.lbf1q2.0001.use1.cache.amazonaws.com", {no_ready_check: true}),
+    fs = require("fs"),
+    filename = file.path+"/"+file.name;
+    console.log(filename);
+
+// Get the file I use for testing like this:
+//    curl http://ranney.com/kids_in_cart.jpg -o kids_in_cart.jpg
+// or just use your own file.
+
+// Read a file from fs, store it in Redis, get it back from Redis, write it back to fs.
+fs.readFile(filename, function (err, data) {
+    if (err) throw err
+    console.log("Read " + data.length + " bytes from filesystem.");
+    
+    client.set(filename, data, redis.print); // set entire file
+    client.get(filename, function (err, reply) { // get entire file
+        if (err) {
+            console.log("Get error: " + err);
+        } else {
+            fs.writeFile("duplicate_" + filename, reply, function (err) {
+                if (err) {
+                    console.log("Error on write: " + err)
+                } else {
+                    console.log("File written.");
+                }
+                client.end();
+            });
+        }
+    });
+});
+  });
+
+  // log any errors that occur
+  form.on('error', function(err) {
+    console.log('An error has occured: \n' + err);
+  });
+
+  // once all the files have been uploaded, send a response to the client
+  form.on('end', function() {
+    res.end('success');
+  });
+
+  // parse the incoming request containing the form data
+  form.parse(req);
+
+});
 
 io.on('connection', function (socket) {
     messages.forEach(function (data) {
