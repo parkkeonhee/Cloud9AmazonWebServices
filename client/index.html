@@ -1,13 +1,17 @@
 <!DOCTYPE HTML>
-<html>
+<HTML>
 
-<head>
+<HEAD>
     <meta charset="utf-8">
-    <title>jQuery File Upload Example</title>
+    <title>File Upload on Node.js</title>
     <script src="js/jquery.min.js"></script>
-</head>
+</HEAD>
 
-<body>
+<BODY>
+    <h1>File upload on Node.js using AWS EC2 and ElastiCache</h1>
+    <h2>Directions:</h2>
+    <p>1. Upload a JSON file.</p>
+
     <form action="/" method="post" enctype="multipart/form-data">
         <input type="file" name="file[]" multiple="" />
         <input id="uploadID" type="submit" value="Upload">
@@ -35,5 +39,6 @@
             });
         });
     </script>
-</body>
-</html>
+</BODY>
+
+</HTML>

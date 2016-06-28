@@ -1,21 +1,9 @@
-//
-// # SimpleServer
-//
-// A simple chat server using Socket.IO, Express, and Async.
-//
 var http = require('http');
 var path = require('path');
 
 var async = require('async');
 var socketio = require('socket.io');
 var express = require('express');
-
-//
-// ## SimpleServer `SimpleServer(obj)`
-//
-// Creates a new instance of SimpleServer with the following options:
-//  * `port` - The HTTP port to listen on. If `process.env.PORT` is set, _it overrides this value_.
-//
 
 var router = express();
 var server = http.createServer(router);
@@ -34,41 +22,33 @@ router.post('/', function(req, res) {
   // specify that we want to allow the user to upload multiple files in a single request
   form.multiples = true;
 
-  // store all uploads in the /uploads directory
-  // form.uploadDir = path.join(__dirname, '/uploads');
-
   // every time a file has been uploaded successfully,
   // rename it to it's orignal name
   form.on('file', function(field, file) {
-    // Read a file from disk, store it in Redis, then read it back from Redis.
 
+    // Read a file from disk, store it in Redis, then read it back from Redis.
     var redis = require("redis"),
       client = redis.createClient(6379, "myfirstcluster.lbf1q2.0001.use1.cache.amazonaws.com", {
         no_ready_check: true
       }),
       fs = require("fs"),
 
-      // directory that stores the JSON file.
+      // Directory that stores the JSON file.
       filename = file.path;
-      
-      // appending below to filename causes error.
-      //+"/" file.name;
 
     // prints out the directory location of the uploaded JSON file.
-    console.log(filename);
-
-    // Get the file I use for testing like this:
-    //    curl http://ranney.com/kids_in_cart.jpg -o kids_in_cart.jpg
-    // or just use your own file.
+    console.log("File successfully saved in: " + filename);
 
     // Read a file from fs, store it in Redis, get it back from Redis, write it back to fs.
     fs.readFile(filename, function(err, data) {
       if (err) throw err;
       console.log("Read " + data.length + " bytes from filesystem.");
 
-      client.set(filename, data, redis.print); // set entire file
-
-      client.get(filename, function(err, reply) { // get entire file
+      // set entire file
+      client.set(filename, data, redis.print);
+      
+      // get entire file
+      client.get(filename, function(err, reply) {
         if (err) {
           console.log("Get error: " + err);
         }
@@ -80,7 +60,7 @@ router.post('/', function(req, res) {
             else {
               console.log("File written.");
             }
-            
+
             // node_redis: Using .end() without the flush parameter is deprecated and throws from v.3.0.0 on.
             // client.end(flush) forcibly close the connection to the Redis server.
             // Set flush to true.
@@ -92,17 +72,17 @@ router.post('/', function(req, res) {
     });
   });
 
-  // log any errors that occur
+  // Log any occurring errors.
   form.on('error', function(err) {
     console.log('An error has occured: \n' + err);
   });
 
-  // once all the files have been uploaded, send a response to the client
+  // Send a response to the client after all the files have been uploaded.
   form.on('end', function() {
     res.end('success');
   });
 
-  // parse the incoming request containing the form data
+  // Parse the incoming request containing the form data.
   form.parse(req);
 });
 
