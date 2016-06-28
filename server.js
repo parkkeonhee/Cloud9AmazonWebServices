@@ -1,14 +1,32 @@
+/**
+ * Author: Keon Hee Park
+ * Latest version to date: June 28, 2016.
+ * 
+ * Topic: File Upload on Node.js using AWS EC2 and ElastiCache
+ * 
+ * Description: 
+ *  Deploys a website which uploads a file on Node.js using Amazon Web Services’ EC2 and ElastiCache.
+ *  Note: This program uses Redis for ElastiCache.
+ * 
+ * Instructions:
+ *  1. Same directory as server.js
+ *  2. Dependencies needed: async, express, formidable, redis, and socket.io
+ *  3. HTML submit form for JSON files.
+ *  4. ElastiCache's node endpoint address.
+ */
+
+// Required node_modules
+var async = require('async');
+var express = require('express');
+var formidable = require('formidable');
+var socketio = require('socket.io');
+
+// Setup server
 var http = require('http');
 var path = require('path');
-
-var async = require('async');
-var socketio = require('socket.io');
-var express = require('express');
-
 var router = express();
 var server = http.createServer(router);
 var io = socketio.listen(server);
-var formidable = require('formidable');
 
 router.use(express.static(path.resolve(__dirname, 'client')));
 var messages = [];
@@ -16,14 +34,13 @@ var sockets = [];
 
 router.post('/', function(req, res) {
 
-  // create an incoming form object
+  // Create an incoming form object
   var form = new formidable.IncomingForm();
 
-  // specify that we want to allow the user to upload multiple files in a single request
+  // Specify that we want to allow the user to upload multiple files in a single request
   form.multiples = true;
 
-  // every time a file has been uploaded successfully,
-  // rename it to it's orignal name
+  // Every time a file has been uploaded successfully, rename it to it's orignal name.
   form.on('file', function(field, file) {
 
     // Read a file from disk, store it in Redis, then read it back from Redis.
@@ -36,7 +53,7 @@ router.post('/', function(req, res) {
       // Directory that stores the JSON file.
       filename = file.path;
 
-    // prints out the directory location of the uploaded JSON file.
+    // Prints out the directory location of the uploaded JSON file.
     console.log("File successfully saved in: " + filename);
 
     // Read a file from fs, store it in Redis, get it back from Redis, write it back to fs.
@@ -44,10 +61,10 @@ router.post('/', function(req, res) {
       if (err) throw err;
       console.log("Read " + data.length + " bytes from filesystem.");
 
-      // set entire file
+      // Set entire file
       client.set(filename, data, redis.print);
-      
-      // get entire file
+
+      // Get entire file
       client.get(filename, function(err, reply) {
         if (err) {
           console.log("Get error: " + err);
@@ -79,7 +96,7 @@ router.post('/', function(req, res) {
 
   // Send a response to the client after all the files have been uploaded.
   form.on('end', function() {
-    res.end('success');
+    res.end('Successfully uploaded!');
   });
 
   // Parse the incoming request containing the form data.
