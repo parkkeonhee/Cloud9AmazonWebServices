@@ -73,7 +73,7 @@ router.post('/', function(req, res) {
           console.log("Get error: " + err);
         }
         else {
-          fs.writeFile("duplicate_" + filename, reply, function(err) {
+          fs.writeFile(filename, reply, function(err) {
             if (err) {
               console.log("Error on write: " + err);
             }
