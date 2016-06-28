@@ -80,7 +80,12 @@ router.post('/', function(req, res) {
             else {
               console.log("File written.");
             }
-            client.end();
+            
+            // node_redis: Using .end() without the flush parameter is deprecated and throws from v.3.0.0 on.
+            // client.end(flush) forcibly close the connection to the Redis server.
+            // Set flush to true.
+            // If flush is set to false, then all running commands that are still running will silently fail.
+            client.end(true);
           });
         }
       });
