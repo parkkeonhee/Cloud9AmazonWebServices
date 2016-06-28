@@ -1,37 +1,39 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
-<meta charset="utf-8">
-<title>jQuery File Upload Example</title>
-<script src="js/jquery.min.js"> </script>
+    <meta charset="utf-8">
+    <title>jQuery File Upload Example</title>
+    <script src="js/jquery.min.js"></script>
 </head>
+
 <body>
     <form action="/" method="post" enctype="multipart/form-data">
         <input type="file" name="file[]" multiple="" />
         <input id="uploadID" type="submit" value="Upload">
     </form>
-    
+
     <script type="text/javascript">
-    $("#uploadID").click(function(){
-        
-    var fd = new FormData();
-    var file_data = $('input[type="file"]')[0].files; // for multiple files
-    for(var i = 0;i<file_data.length;i++){
-        fd.append("filename", file_data[i]);
-    }
-    var other_data = $('form').serializeArray();
-    $.each(other_data,function(key,input){
-        fd.append(input.name,input.value);
-    });
-    $.ajax({
-        url: '/',
-        data: fd,
-        type: 'POST',
-        success: function(data){
-            console.log(data);
-        }
-    });
-    });
+        $("#uploadID").click(function() {
+
+            var fd = new FormData();
+            var file_data = $('input[type="file"]')[0].files; // for multiple files
+            for (var i = 0; i < file_data.length; i++) {
+                fd.append("filename", file_data[i]);
+            }
+            var other_data = $('form').serializeArray();
+            $.each(other_data, function(key, input) {
+                fd.append(input.name, input.value);
+            });
+            $.ajax({
+                url: '/',
+                data: fd,
+                type: 'POST',
+                success: function(data) {
+                    console.log(data);
+                }
+            });
+        });
     </script>
-</body> 
+</body>
 </html>
