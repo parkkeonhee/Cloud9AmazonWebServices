@@ -23,8 +23,12 @@ var formidable = require('formidable');
 var http = require('http');
 var path = require('path');
 var redis = require('redis');
-var client = redis.createClient(6379, "myfirstcluster.lbf1q2.0001.use1.cache.amazonaws.com");
-
+try {
+  var client = redis.createClient(6379, "myfirstcluster.lbf1q2.0001.use1.cache.amazonaws.com");
+}
+catch (err) {
+  console.log("Redis node endpoint address is not valid.")
+}
 var router = express();
 var server = http.createServer(router);
 
@@ -39,10 +43,10 @@ router.post('/', function(req, res) {
 
   form.on('file', function(field, file) {
     // Read a file from disk, store it in Redis, then read it back from Redis.
-      var fs = require("fs");
+    var fs = require('fs');
 
     // Directory that stores the JSON file.
-      var filename = file.path;
+    var filename = file.path;
 
     // Prints out the directory location of the uploaded JSON file.
     console.log("File successfully saved in: " + filename);
