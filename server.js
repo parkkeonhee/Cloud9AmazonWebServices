@@ -23,12 +23,16 @@ var formidable = require('formidable');
 var http = require('http');
 var path = require('path');
 var redis = require('redis');
-try {
-  var client = redis.createClient(6379, "myfirstcluster.lbf1q2.0001.use1.cache.amazonaws.com");
-}
-catch (err) {
-  console.log("Redis node endpoint address is not valid.")
-}
+
+var client = redis.createClient(6379, "myfirstcluster.lbf1q2.0001.use1.cache.amazonaws.com");
+
+// Error handler that checks if the redis endpoint on client is valid or not.
+client.on('error', function (err){
+  console.log(err);
+  console.log("\n" + "Error: Redis node endpoint address is not valid." + "\n");
+  client.end(true);
+});
+
 var router = express();
 var server = http.createServer(router);
 
@@ -57,8 +61,12 @@ router.post('/', function(req, res) {
       console.log("Read " + data.length + " bytes from filesystem.");
 
       // Set entire file
-      client.set(filename, data, redis.print);
-
+      try {
+        client.set(filename, data, redis.print);
+      }
+      catch (err) {
+        console.log("set log");
+      }
       // Get entire file
       client.get(filename, function(err, reply) {
         if (err) {
