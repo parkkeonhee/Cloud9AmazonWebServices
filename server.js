@@ -29,9 +29,14 @@ var client = redis.createClient(6379, "myfirstcluster.lbf1q2.0001.use1.cache.ama
 // Error handler that checks if the redis endpoint on client is valid or not.
 client.on('error', function (err){
   console.log(err);
-  console.log("\n" + "Error: Redis node endpoint address is not valid." + "\n");
+  console.error(new Error("Redis node endpoint address is not valid."));
   client.end(true);
+  
+  // Exit the program with failure code
+  process.exit(1);
 });
+
+// find out how to exit after an error has occurred.
 
 var router = express();
 var server = http.createServer(router);
@@ -106,6 +111,8 @@ router.post('/', function(req, res) {
   form.parse(req);
 });
 
+
+// fix where it only listens when its valid
 server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function() {
   var addr = server.address();
   console.log("Chat server listening at", addr.address + ":" + addr.port);
