@@ -1,6 +1,6 @@
 /**
  * Author: Keon Hee Park
- * Latest version to date: June 28, 2016.
+ * Latest version to date: August 20, 2016.
  * 
  * Topic: File Upload on Node.js using AWS EC2 and ElastiCache
  * 
