@@ -10,7 +10,7 @@
  * 
  * Instructions:
  *  1. Same directory as server.js
- *  2. Dependencies needed: async, express, formidable, redis, and socket.io
+ *  2. Dependencies needed: express, formidable, and redis.
  *  3. HTML submit form for JSON files.
  *  4. ElastiCache's node endpoint address.
  */
